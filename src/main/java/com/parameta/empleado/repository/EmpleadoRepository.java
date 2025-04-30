@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
-    // No necesitamos agregar ningún método aquí.  JpaRepository proporciona métodos básicos (save, findById, findAll, deleteById, etc.)
 }

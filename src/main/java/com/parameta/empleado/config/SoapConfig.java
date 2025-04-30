@@ -24,7 +24,7 @@ public class SoapConfig {
         return new ServletRegistrationBean<>(servlet, "/ws/*");
     }
 
-    @Bean(name = "empleadoServiceWsdl") // Renombrado a empleadoServiceWsdl
+    @Bean(name = "empleadoServiceWsdl")
     public DefaultWsdl11Definition empleadoServiceWsdl(XsdSchema empleadoSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("EmpleadoServicePort");

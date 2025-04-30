@@ -28,14 +28,12 @@ public class EmpleadoEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "almacenarEmpleadoRequest")
     @ResponsePayload
     public AlmacenarEmpleadoResponse almacenarEmpleado(@RequestPayload AlmacenarEmpleadoRequest request) {
-        EmpleadoType empleadoType = request.getEmpleado(); // Obtén EmpleadoType
+        EmpleadoType empleadoType = request.getEmpleado();
+
+        AlmacenarEmpleadoResponse response = new AlmacenarEmpleadoResponse();
 
         if (empleadoType != null) {
-            System.out.println("Nombre del empleado (desde EmpleadoType): " + empleadoType.getNombres());
-            System.out.println("ID del empleado (desde EmpleadoType): " + empleadoType.getId());
-
             Empleado empleado = new Empleado();
-            empleado.setId(empleadoType.getId());
             empleado.setNombres(empleadoType.getNombres());
             empleado.setApellidos(empleadoType.getApellidos());
             empleado.setTipoDocumento(empleadoType.getTipoDocumento());
@@ -45,16 +43,21 @@ public class EmpleadoEndpoint {
             empleado.setCargo(empleadoType.getCargo());
             empleado.setSalario(empleadoType.getSalario());
 
-            empleadoRepository.save(empleado);
 
-            AlmacenarEmpleadoResponse response = new AlmacenarEmpleadoResponse();
-            response.setResultado("Empleado almacenado exitosamente (vía Spring WS)");
-            return response;
+            try {
+                empleadoRepository.save(empleado);
+                response.setResultado("Empleado almacenado exitosamente (vía Spring WS (SOAP))");
+
+            } catch (Exception e) {
+                System.out.println("No fue posible guardar: " + e);
+                response.setResultado("Error al almacenar el empleado (SOAP)");
+            }
+
         } else {
             System.out.println("El objeto empleado dentro del request es null.");
-            AlmacenarEmpleadoResponse response = new AlmacenarEmpleadoResponse();
             response.setResultado("Error al recibir los datos del empleado.");
-            return response;
+
         }
+        return response;
     }
 }

@@ -3,6 +3,9 @@ package com.parameta.empleado.service;
 import com.parameta.empleado.model.Empleado;
 import com.parameta.empleado.repository.EmpleadoRepository;
 import com.parameta.empleado.response.EmpleadoResponse;
+import com.parameta.empleado.soap.client.EmployeeSoapClient;
+import com.parameta.empleado.soap.types.AlmacenarEmpleadoRequest;
+import com.parameta.empleado.soap.types.EmpleadoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +20,33 @@ import java.util.Date;
 public class EmpleadoService {
 
     private final EmpleadoRepository empleadoRepository;
+    private final EmployeeSoapClient employeeSoapClient;
 
     @Autowired
-    public EmpleadoService(EmpleadoRepository empleadoRepository) {
+    public EmpleadoService(EmpleadoRepository empleadoRepository, EmployeeSoapClient employeeSoapClient) {
         this.empleadoRepository = empleadoRepository;
+        this.employeeSoapClient = employeeSoapClient;
     }
 
     public EmpleadoResponse procesarEmpleado(Empleado empleado) {
         validarEmpleado(empleado);
 
-        empleadoRepository.save(empleado);
-        System.out.println("Service: Almacenando empleado (vía Service): " + empleado.getNombres());
+        EmpleadoType empleadoType = new EmpleadoType();
+        empleadoType.setNombres(empleado.getNombres());
+        empleadoType.setApellidos(empleado.getApellidos());
+        empleadoType.setTipoDocumento(empleado.getTipoDocumento());
+        empleadoType.setNumeroDocumento(empleado.getNumeroDocumento());
+        empleadoType.setFechaNacimiento(empleado.getFechaNacimiento());
+        empleadoType.setFechaVinculacion(empleado.getFechaVinculacion());
+        empleadoType.setCargo(empleado.getCargo());
+        empleadoType.setSalario(empleado.getSalario());
+
+        AlmacenarEmpleadoRequest almacenarEmpleadoRequest = new AlmacenarEmpleadoRequest();
+        almacenarEmpleadoRequest.setEmpleado(empleadoType);
+
+        employeeSoapClient.almacenarEmpleado(almacenarEmpleadoRequest);
+
+        System.out.println("Service: Llamada a SOAP para almacenar empleado: " + empleado.getNombres());
 
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fechaVinculacion = null;

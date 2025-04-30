@@ -18,12 +18,10 @@ public class Empleado {
     private String apellidos;
     private String tipoDocumento;
     private String numeroDocumento;
-    private String fechaNacimiento; // Cambiado a String
-    private String fechaVinculacion; // Cambiado a String
+    private String fechaNacimiento;
+    private String fechaVinculacion;
     private String cargo;
     private Double salario;
-
-    // Getters y Setters (sin cambios en la estructura)
 
     public Long getId() {
         return id;
